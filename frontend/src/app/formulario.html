@@ -1,0 +1,51 @@
+<a class="back" [routerLink]="cancelar">← Volver</a>
+<header class="page-heading"><h1>{{ encabezado }}</h1></header>
+@if (error()) {
+  <p class="notice error" role="alert">{{ error() }}
+    @if (!listo()) { <button type="button" (click)="cargar()">Reintentar</button> }
+  </p>
+}
+@if (cargando()) {
+  <p class="notice" role="status">Cargando formulario…</p>
+} @else if (listo()) {
+  <form class="panel editor" [formGroup]="formulario" (ngSubmit)="guardar()" novalidate>
+    <fieldset [disabled]="guardando()">
+      <label for="texto">{{ etiqueta }}
+        <input id="texto" formControlName="texto" required
+          [attr.aria-invalid]="formulario.controls.texto.touched && formulario.controls.texto.invalid"
+          aria-describedby="texto-error">
+      </label>
+      <div id="texto-error">
+        @if (formulario.controls.texto.touched && formulario.controls.texto.invalid) {
+          <p class="field-error" role="alert">{{ esLibro ? 'Ingresá un título.' : 'Ingresá un nombre.' }}</p>
+        }
+      </div>
+      @if (esLibro) {
+        <label for="autor">Autor
+          <select id="autor" formControlName="autor" required
+            [attr.aria-invalid]="formulario.controls.autor.touched && formulario.controls.autor.invalid"
+            aria-describedby="autor-error">
+            <option [ngValue]="null">Seleccioná un autor</option>
+            @for (autor of autores(); track autor.id) {
+              <option [ngValue]="autor.id">{{ autor.nombre }}</option>
+            }
+          </select>
+        </label>
+        <div id="autor-error">
+          @if (!autores().length) {
+            <p class="notice">Para registrar un libro, <a routerLink="/autores/nuevo">creá un autor</a>.</p>
+          }
+          @if (formulario.controls.autor.touched && formulario.controls.autor.invalid) {
+            <p class="field-error" role="alert">Seleccioná un autor.</p>
+          }
+        </div>
+      }
+      <div class="actions">
+        <button class="primary" type="submit" [disabled]="esLibro && !autores().length">
+          {{ guardando() ? 'Guardando…' : 'Guardar' }}
+        </button>
+        @if (!guardando()) { <a class="button" [routerLink]="cancelar">Cancelar</a> }
+      </div>
+    </fieldset>
+  </form>
+}

@@ -9,6 +9,7 @@ __pycache__/
 *.db-*
 .env
 .env.*
+!backend/.env.example
 *.tmp
 *.log
 .pytest_cache/

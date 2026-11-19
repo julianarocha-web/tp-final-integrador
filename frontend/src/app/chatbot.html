@@ -1,0 +1,47 @@
+<header class="page-heading">
+  <div>
+    <h1>Chatbot</h1>
+    <p>Consultá el catálogo de libros y autores.</p>
+  </div>
+</header>
+
+<section class="panel editor chat-panel" aria-label="Chat del catálogo">
+  <div role="log" aria-label="Conversación">
+    @if (!mensajes().length) {
+      <p class="chat-hint">Por ejemplo, ¿cuántos libros tiene la biblioteca?</p>
+    } @else {
+      <ol class="chat-messages">
+        @for (mensaje of mensajes(); track $index) {
+          <li class="chat-message" [class.chat-user]="mensaje.rol === 'usuario'">
+            <strong>{{ mensaje.rol === 'usuario' ? 'Vos' : 'Asistente' }}</strong>
+            <p>{{ mensaje.texto }}</p>
+          </li>
+        }
+      </ol>
+    }
+  </div>
+
+  @if (cargando()) {
+    <p class="notice" role="status">El asistente está respondiendo…</p>
+  }
+  @if (error()) {
+    <p class="notice error" role="alert">{{ error() }}</p>
+  }
+
+  <form class="chat-form" [formGroup]="formulario" (ngSubmit)="enviar()" novalidate>
+    <label for="pregunta-chat">Tu pregunta
+      <input id="pregunta-chat" formControlName="pregunta" [attr.maxlength]="maximo"
+        [attr.aria-invalid]="pregunta.touched && pregunta.invalid"
+        aria-describedby="pregunta-chat-error" autocomplete="off" required>
+    </label>
+    <button class="primary" type="submit" [disabled]="cargando()">Enviar</button>
+    <div id="pregunta-chat-error">
+      @if (pregunta.touched && pregunta.hasError('required')) {
+        <p class="field-error" role="alert">Escribí una pregunta.</p>
+      }
+      @if (pregunta.touched && pregunta.hasError('maxlength')) {
+        <p class="field-error" role="alert">La pregunta puede tener hasta {{ maximo }} caracteres.</p>
+      }
+    </div>
+  </form>
+</section>

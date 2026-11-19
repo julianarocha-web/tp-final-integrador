@@ -5,6 +5,7 @@ from flask import Flask, abort, jsonify, request, url_for
 from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
 
+from chatbot import responder
 from db import close_db, get_db, init_db
 
 
@@ -198,5 +199,15 @@ def create_app(database=None):
             if not cursor.rowcount:
                 abort(404, description="Libro no encontrado.")
         return jsonify(mensaje="Libro eliminado.")
+
+    @app.post("/chatbot")
+    def consultar_chatbot():
+        request.max_content_length = 16 * 1024
+        mensaje = leer_texto(leer_json(), "mensaje")
+        if len(mensaje) > 1000:
+            abort(400, description="La pregunta puede tener hasta 1000 caracteres.")
+        if any(not letra.isprintable() for letra in mensaje):
+            abort(400, description="La pregunta debe escribirse en una sola línea de texto.")
+        return jsonify(respuesta=responder(mensaje))
 
     return app

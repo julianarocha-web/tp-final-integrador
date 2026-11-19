@@ -1,0 +1,13 @@
+<header class="site-header">
+  <div class="shell header-content">
+    <a class="brand" routerLink="/libros"><span class="brand-mark" aria-hidden="true"></span> Biblioteca</a>
+    <nav aria-label="Navegación principal">
+      <a routerLink="/libros" routerLinkActive="active" ariaCurrentWhenActive="location">Libros</a>
+      <a routerLink="/autores" routerLinkActive="active" ariaCurrentWhenActive="location">Autores</a>
+      <a routerLink="/chatbot" routerLinkActive="active" ariaCurrentWhenActive="location">Chatbot</a>
+    </nav>
+  </div>
+</header>
+<main class="shell">
+  <router-outlet />
+</main>
